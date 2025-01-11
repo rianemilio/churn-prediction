@@ -1,0 +1,22 @@
+# Ambiente Virtual
+venv/
+.venv/
+
+# Arquivos do Git
+.git/
+.gitignore
+
+# Arquivos do Docker
+Dockerfile
+.dockerignore
+
+# Cache do Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Arquivos do MLflow
+mlruns/
+
+# Arquivos de sistema
+.DS_Store

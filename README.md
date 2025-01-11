@@ -1,93 +1,111 @@
-# Projeto de Previsão de Churn (Cancelamento de Clientes)
+# Projeto de Previsão de Churn: Pipeline de ML com Deploy via API e Docker
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)![Pandas](https://img.shields.io/badge/Pandas-2C2D72?style=for-the-badge&logo=pandas&logoColor=white)![Scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)![Seaborn](https://img.shields.io/badge/Seaborn-3776AB?style=for-the-badge&logo=seaborn&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)![MLflow](https://img.shields.io/badge/MLflow-0796F5?style=for-the-badge&logo=mlflow&logoColor=white)![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-Este repositório contém um projeto de Machine Learning de ponta a ponta para prever a probabilidade de clientes de uma empresa de telecomunicações cancelarem seus serviços (churn). O projeto foi desenvolvido de forma modular e segue boas práticas de engenharia de software, com o objetivo de ser um pipeline de dados reprodutível e fácil de entender.
+Este repositório contém um projeto de Machine Learning de ponta a ponta que vai além da simples modelagem. Ele implementa um pipeline de MLOps completo, desde a análise exploratória e treinamento rastreável com **MLflow**, até o deploy do modelo como uma **API REST com FastAPI**, containerizada com **Docker**.
 
 ## 📝 Contexto do Problema de Negócio
 
-A aquisição de novos clientes é significativamente mais cara do que a retenção dos clientes existentes. Para empresas de serviços por assinatura, como as de telecomunicações, prever quais clientes estão em risco de cancelar seus contratos é crucial.
+A aquisição de novos clientes é significativamente mais cara do que a retenção dos clientes existentes. O objetivo deste projeto é construir um modelo de classificação capaz de identificar clientes com alta probabilidade de cancelar seus serviços (churn), permitindo que a empresa tome ações proativas para retê-los.
 
-O objetivo deste projeto é construir um modelo de classificação capaz de identificar clientes com alta probabilidade de churn, permitindo que a empresa tome ações proativas para retê-los, como oferecer descontos, suporte personalizado ou melhorias no serviço.
+O dataset utilizado foi o [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) da IBM.
 
-O dataset utilizado foi o [Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn) da IBM, disponível no Kaggle.
+---
+
+## ✨ Funcionalidades do Projeto
+
+Este projeto demonstra um fluxo de trabalho completo e moderno de Data Science:
+
+*   **Pipeline de Treinamento Reprodutível:** Scripts modulares para ingestão, pré-processamento e treinamento.
+*   **Rastreamento de Experimentos:** Integração com **MLflow** para logar parâmetros, métricas e artefatos (modelo e gráficos), garantindo a rastreabilidade e comparação de diferentes execuções.
+*   **API de Inferência:** Uma API RESTful construída com **FastAPI** para servir o modelo e fazer previsões em tempo real.
+*   **Containerização:** Um **Dockerfile** para empacotar a API e suas dependências, garantindo um ambiente de execução consistente e portátil.
+*   **Documentação Interativa:** Geração automática de documentação da API (Swagger UI) pelo FastAPI.
 
 ---
 
 ## 🚀 Como Executar o Projeto
 
-Para executar o pipeline completo em sua máquina local, siga os passos abaixo.
+Existem duas maneiras de executar este projeto: localmente via API ou de forma isolada via contêiner Docker.
 
-### Pré-requisitos
-*   Git
-*   Python 3.8+
+### Método 1: Execução com Docker (Recomendado)
 
-### Passos
+Esta é a maneira mais simples e robusta, pois abstrai toda a configuração de ambiente.
+
+**Pré-requisitos:**
+*   [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e em execução.
+
+**Passos:**
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/SEU_USUARIO/projeto-previsao-churn.git
+    git clone https://github.com/rianemilio/churn-prediction.git
     cd projeto-previsao-churn
     ```
-
-2.  **Crie e ative um ambiente virtual:**
+2.  **Construa a imagem Docker:**
     ```bash
-    # Para Mac/Linux
-    python3 -m venv venv
-    source venv/bin/activate
-
-    # Para Windows
-    python -m venv venv
-    venv\Scripts\activate
+    docker build -t previsao-churn-api .
     ```
-
-3.  **Instale as dependências:**
+3.  **Execute o contêiner:**
     ```bash
+    docker run -p 8000:8000 previsao-churn-api
+    ```
+4.  **Acesse a API:** Abra seu navegador e acesse a documentação interativa em `http://127.0.0.1:8000/docs`.
+
+### Método 2: Execução Local (Pipeline de Treinamento)
+
+Use este método se você quiser executar o pipeline de treinamento para gerar os artefatos (modelo, gráficos, etc.).
+
+**Pré-requisitos:**
+*   Git
+*   Python 3.9+
+
+**Passos:**
+
+1.  **Clone o repositório e configure o ambiente:**
+    ```bash
+    git clone https://github.com/SEU_USUARIO/projeto-previsao-churn.git
+    cd projeto-previsao-churn
+    python -m venv venv
+    source venv/bin/activate  # (ou venv\Scripts\activate no Windows)
     pip install -r requirements.txt
     ```
-
-4.  **Execute o pipeline principal:**
+2.  **Execute o pipeline de treinamento:**
     ```bash
     python main.py
     ```
+    Isso irá gerar os artefatos nas pastas `output/` e `mlruns/`.
 
-Ao final da execução, o modelo treinado (`churn_model.joblib`) e os gráficos da análise exploratória estarão salvos na pasta `output/`.
+3.  **(Opcional) Inicie a interface do MLflow:**
+    ```bash
+    mlflow ui
+    ```
+    Acesse `http://127.0.0.1:5000` para visualizar os experimentos.
 
 ---
 
 ## 📂 Estrutura do Projeto
 
-O projeto foi organizado de forma modular para garantir a separação de responsabilidades e facilitar a manutenção e escalabilidade.
-
 ```
 projeto-previsao-churn/
+├── api/                     # Código da API FastAPI
+│   ├── main.py
+│   └── schemas.py
+├── data/                    # Dataset
+├── output/                  # Artefatos gerados (modelos, imagens)
+├── src/                     # Código do pipeline de treinamento
+│   ├── data_ingestion.py
+│   ├── exploratory_analysis.py
+│   ├── data_preprocessing.py
+│   └── model_training.py
+├── .dockerignore
 ├── .gitignore
+├── config.py
+├── Dockerfile               # Receita para construir a imagem Docker
+├── main.py                  # Orquestrador do pipeline de treino
 ├── README.md
-├── requirements.txt
-├── config.py                # Arquivo de configuração central
-├── main.py                  # Orquestrador do pipeline
-├── data/
-│   └── ...csv               # Dados brutos
-├── src/
-│   ├── data_ingestion.py    # Módulo para carregar dados
-│   ├── exploratory_analysis.py # Módulo para análise exploratória
-│   ├── data_preprocessing.py   # Módulo para pré-processamento
-│   └── model_training.py       # Módulo para treinamento do modelo
-└── output/
-    ├── images/              # Gráficos gerados pela EDA
-    └── models/              # Modelo treinado salvo
+└── requirements.txt
 ```
-
----
-
-## 🛠️ O Pipeline de Machine Learning
-
-O script `main.py` orquestra a execução das seguintes etapas:
-
-1.  **Ingestão de Dados:** Carrega o dataset a partir do arquivo CSV especificado em `config.py`.
-2.  **Análise Exploratória de Dados (EDA):** Gera e salva visualizações para entender a distribuição dos dados e as relações entre as features e a variável alvo (Churn).
-3.  **Pré-processamento e Engenharia de Features:** Limpa os dados, trata valores faltantes e transforma as features categóricas e numéricas para um formato adequado para o modelo de Machine Learning, utilizando um pipeline do Scikit-learn.
-4.  **Treinamento e Avaliação do Modelo:** Divide os dados em conjuntos de treino e teste, treina um modelo `RandomForestClassifier` e avalia sua performance com métricas como acurácia, precisão, recall e F1-score. O modelo treinado é então salvo para uso futuro.
 
 ---
 
@@ -95,17 +113,14 @@ O script `main.py` orquestra a execução das seguintes etapas:
 
 ### Análise Exploratória
 
-A análise inicial revelou insights importantes sobre o perfil dos clientes que cancelam:
+*   **Fatores de Risco:** A análise revelou que clientes com **contrato mensal**, **baixa fidelidade (tenure)** e **serviço de internet de Fibra Óptica** são os que possuem as maiores taxas de churn.
 
-*   **Distribuição de Churn:** O dataset é desbalanceado, com uma proporção maior de clientes que não cancelaram o serviço. Isso foi considerado durante a divisão treino-teste (estratificação).
-    ![Distribuição de Churn](output/images/churn_distribution.png)
-
-*   **Churn por Tipo de Contrato:** Clientes com contrato mensal (`Month-to-month`) têm uma taxa de cancelamento drasticamente maior em comparação com clientes de contratos anuais. Isso sugere que a flexibilidade do contrato mensal também representa um risco maior de churn.
-    ![Churn por Contrato](output/images/churn_by_contract.png)
+*   **Feature Importance:** O modelo `RandomForest` confirmou que as features mais preditivas são, de fato, `Contract_Month-to-month`, `tenure` e `TotalCharges`.
+    ![Feature Importance](output/images/feature_importance.png)
 
 ### Performance do Modelo
 
-O modelo `RandomForestClassifier` treinado alcançou os seguintes resultados no conjunto de teste:
+O modelo treinado alcançou os seguintes resultados no conjunto de teste, que foram logados no MLflow:
 
 ```
 --- Resultados da Avaliação ---
@@ -121,10 +136,4 @@ Relatório de Classificação:
    macro avg       0.71      0.68      0.69      1409
 weighted avg       0.77      0.78      0.77      1409
 ```
-
-**Conclusão dos Resultados:**
-*   O modelo tem uma **acurácia geral de 77.9%**.
-*   Ele é bom em identificar os clientes que **NÃO** vão cancelar (recall de 89% para a classe 0).
-*   O maior desafio é identificar corretamente os clientes que **VÃO** cancelar. O **recall de 48% para a classe 1** indica que o modelo consegue identificar quase metade dos clientes que de fato cancelaram, o que já permite uma ação de retenção direcionada e valiosa.
-
----
+**Conclusão dos Resultados:** Com uma acurácia de **77.9%** e um recall de **48%** para a classe "Churn", o modelo é uma ferramenta valiosa para identificar um subgrupo significativo de clientes em risco, permitindo que a equipe de retenção foque seus esforços de forma eficaz.

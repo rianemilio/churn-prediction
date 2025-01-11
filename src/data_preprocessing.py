@@ -1,9 +1,10 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
+import joblib
+import os
 
-def preprocess_data(df):
+def preprocess_data(df, output_path):
     """
     Prepara os dados para o treinamento do modelo de machine learning.
     - Trata valores faltantes.
@@ -42,14 +43,22 @@ def preprocess_data(df):
     preprocessor = ColumnTransformer(
         transformers=[
             ('num', StandardScaler(), numeric_features),
-            ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_features)
-        ])
+            ('cat', OneHotEncoder(handle_unknown='ignore', sparse_output=False), categorical_features)
+        ],
+        remainder='passthrough' 
+    )
 
     # O pipeline completo aplica o pré-processamento e retorna os dados prontos
     X_processed = preprocessor.fit_transform(X)
     
     print("Pré-processamento concluído.")
     
-    # Retornamos o objeto do pré-processador para uso futuro
-    # e os dados processados.
+    # Salvar o Objeto de pré-processamento
+    
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    joblib.dump(preprocessor, output_path)
+    print(f"Objeto de pré-processamento salvo em: {output_path}")
+
+    print("Pré-processamento concluído.")
+    
     return X_processed, y, preprocessor
